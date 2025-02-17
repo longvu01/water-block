@@ -71,7 +71,14 @@ export default function App() {
       if (waterLevel > blockHeight) {
         for (let i = blockHeight; i < waterLevel; i++) {
           ctx.fillStyle = "blue";
-          ctx.fillRect(blockHeightIdx * BLOCK_SIZE, (maxHeight - i) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+          const yRect = (maxHeight - i) * BLOCK_SIZE
+
+          ctx.fillRect(blockHeightIdx * BLOCK_SIZE, yRect, BLOCK_SIZE, BLOCK_SIZE);
+
+          if(i === 0) {
+            ctx.fillText(blockHeightIdx.toString(), blockHeightIdx * BLOCK_SIZE + BLOCK_SIZE / 2, yRect + BLOCK_SIZE * 2);
+          }
         }
       }
 
