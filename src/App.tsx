@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 
 const BLOCK_SIZE = 30;
 const DEFAULT_MAX_BLOCK_HEIGHT = 7;
@@ -9,6 +9,8 @@ export default function App() {
   const [error, setError] = useState<string>('');
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const deferBlockHeights = useDeferredValue<number[]>(blockHeights)
 
   const handleChangeBlocksHeight = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError('')
@@ -33,25 +35,25 @@ export default function App() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    const blockAmount = blockHeights.length
-    const maxHeight = Math.max(...blockHeights, DEFAULT_MAX_BLOCK_HEIGHT);
+    const blockAmount = deferBlockHeights.length
+    const maxHeight = Math.max(...deferBlockHeights, DEFAULT_MAX_BLOCK_HEIGHT);
 
     const leftMax = new Array(blockAmount).fill(0);
     const rightMax = new Array(blockAmount).fill(0);
     let calcSumWater = 0
 
-    leftMax[0] = blockHeights[0];
+    leftMax[0] = deferBlockHeights[0];
     // Fill leftMax arr
     for (let i = 1; i < blockAmount; i++) {
-      leftMax[i] = Math.max(leftMax[i - 1], blockHeights[i]);
+      leftMax[i] = Math.max(leftMax[i - 1], deferBlockHeights[i]);
     }
 
-    rightMax[blockAmount - 1] = blockHeights[blockAmount - 1];
+    rightMax[blockAmount - 1] = deferBlockHeights[blockAmount - 1];
     // Fill rightMax arr
     for (let i = blockAmount - 2; i >= 0; i--)  {
-      rightMax[i] = Math.max(rightMax[i + 1], blockHeights[i]);
+      rightMax[i] = Math.max(rightMax[i + 1], deferBlockHeights[i]);
     }
-    blockHeights.forEach((blockHeight, blockHeightIdx) => {
+    deferBlockHeights.forEach((blockHeight, blockHeightIdx) => {
       // Draw wall block
       for (let i = 0; i < blockHeight; i++) {
         ctx.strokeStyle = "black";
@@ -86,7 +88,7 @@ export default function App() {
     });
 
     setSumWater(calcSumWater);
-  }, [blockHeights]);
+  }, [deferBlockHeights]);
 
   return (
     <>
